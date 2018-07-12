@@ -1,0 +1,330 @@
+ 										/*********************************************************选课管理系统**********************************************************/ 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+typedef struct student{			///////////学生结构体类型 
+	char name[20];/////	中文名字 
+	int number;////学号
+	char clas[20];//////班级 
+	char cname[20][20];//////选择的课程 
+}STU;
+typedef struct teacher{			////////////教师结构体 
+	char name[20];///姓名 
+	int number;///工号 
+	char institute[20];///院系 
+	char cname[20][20];///教授课程 
+}TEA;
+typedef struct course{
+	char name[20];///课程名称
+	int number;///课程编号
+	char institute[20];///课程所属院系 
+	char tname[20];////教授的教师 
+}COUR;
+
+typedef struct Snode{		////学生链表 
+	STU data;
+	Snode *next;
+	
+}Snode,*Slist;
+typedef struct Tnode{
+	TEA data;
+	Tnode *next;
+	
+}Tnode,*Tlist;
+typedef struct Cnode{
+	COUR data;
+	Cnode *next;
+}Cnode,*Clist;
+
+int menu()					//////菜单 
+{	int chioce;
+	printf("*********欢迎使用选课管理系统************\n");
+	printf("*********请输入您的操作选项*************\n");
+	printf("	1.添加学生信息\n");
+	printf("	2.添加教师信息\n");
+	printf("	3.添加课程信息\n");
+	printf("	4.修改学生信息\n");	//////包括学生个人信息，以及   学生选择的课程 
+	printf("	5.修改教师信息\n"); /////// 包括老师的个人信息，以及   老师教授的课程 
+	printf("	6.修改课程信息\n"); ///////修改课程信息（授课地点，时间，授课老师） 
+	printf("	7.显示所有学生信息\n");
+	printf("	8.显示所有课程信息\n");
+	printf("	9.显示所有老师信息\n");
+	printf("	10.查找学生信息\n");
+	printf("	11.查找老师信息\n");
+	printf("	12.查找课程信息\n");
+	scanf("%d",&chioce);
+	getchar();
+	return chioce;
+ 
+}
+void Sini(Slist &L)		////初始化 
+{	L=new Snode;
+	L->next=NULL;
+	
+}
+void Cini(Clist &L)
+{	L=new Cnode;
+	L->next=NULL;
+	
+}
+void Tini(Tlist &L)
+{	L=new Tnode;
+	L->next=NULL;
+	
+}
+void Sinsert(Slist &L)///插入 
+{	Slist p=L;
+	Slist q;///插入的结点
+	int i=0;
+	char ch;
+	q=new Snode;
+	printf("请输入学生的姓名: ");
+	scanf("%s",q->data.name);
+	printf("请输入学生的学号： ");
+	scanf("%d",&q->data.number);
+	printf("请输入学生的班级： ");
+	scanf("%s",q->data.clas);
+	printf("请输入学生选择的课程： ");
+	do{
+		scanf("%s",q->data.cname[i]);
+		i++;
+		getchar();
+		printf("继续输入吗？y/n");
+		scanf("%c",&ch);
+		getchar();
+	} while(ch=='y'||ch=='Y');
+
+	strcpy(q->data.cname[i],"0");
+
+	q->next=NULL;
+	while(p->next!=NULL) p=p->next;
+	p->next=q;
+
+}
+void Cinsert(Clist &L)
+{	Clist p=L;
+	Clist q;
+	q=new Cnode;
+	printf("请输入课程的名称：");
+	scanf("%s",q->data.name);
+	printf("请输入课程的编号：");
+	scanf("%d",&q->data.number);
+	printf("请输入课程的所属院系： ");
+	scanf("%s",q->data.institute);
+	printf("请输入课程的授课老师： ");
+	scanf("%s",q->data.tname);
+	q->next=NULL;
+	while(p->next!=NULL) p=p->next;
+	p->next=q;
+}
+void Tinsert(Tlist &L)
+{	Tlist p=L;
+	Tlist q;///插入的结点
+	int i=0;
+	char ch;
+	q=new Tnode;
+	printf("请输入教师的姓名: ");
+	scanf("%s",q->data.name);
+	printf("请输入教师的工号： ");
+	scanf("%d",&q->data.number);
+	printf("请输入教师的院系： ");
+	scanf("%s",q->data.institute);
+	printf("请输入学生选择的课程： ");
+	do{
+		scanf("%s",q->data.cname[i]);
+		i++;
+		getchar();
+		printf("继续输入吗？y/n: ");
+		scanf("%c",&ch);
+		getchar();
+	} while(ch=='y'||ch=='Y');
+	strcpy(q->data.cname[i],"0");
+	q->next=NULL;
+	while(p->next!=NULL) p=p->next;
+	p->next=q;
+
+}
+void Stravel(Slist L)
+{	Slist p=L->next;
+	while(p!=NULL){
+		int i=0;
+		printf("姓名：%s  学号：%d  班级：%s 所选课程： ",p->data.name,p->data.number,p->data.clas);
+		while(strcmp(p->data.cname[i],"0")!=0)
+		{	 
+			printf("%s ",p->data.cname[i]); 
+			i++;
+		 } 
+		putchar('\n');
+		p=p->next;
+		
+	}
+}
+void Ctravel(Clist L)
+{	Clist p=L->next;
+	while(p!=NULL)
+	{	printf("名称：%s  编号：%d  所属院系：%s  授课教师：%s",p->data.name,p->data.number,p->data.institute,p->data.tname);
+		putchar('\n');
+	}
+}
+void Ttravel(Tlist L)
+{	Tlist p=L->next;
+	while(p!=NULL){
+		int i=0;
+		printf("姓名：%s  工号：%d  院系：%s 教授课程： ",p->data.name,p->data.number,p->data.institute);
+		while(strcmp(p->data.cname[i],"0")!=0)
+		{	 
+			printf("%s ",p->data.cname[i]); 
+			i++;
+		 } 
+		putchar('\n');
+		p=p->next;
+		
+	}
+}
+void Ssearch(Slist L)
+{	Slist p=L->next;
+	int ch;
+	int nu;
+	char na[20];
+	printf("请输入您要查找的学生的1：姓名或2：学号"); 
+	scanf("%d",&ch);
+	getchar();
+	switch(ch){
+		case 1: printf("请输入该学生的的姓名："); scanf("%s",na);
+				while(p!=NULL){
+					int i=0;
+				if(strcmp(p->data.name,na)==0) {
+					printf("姓名：%s  学号：%d  班级：%s  所选课程： ",p->data.name,p->data.number,p->data.clas);
+					while(strcmp(p->data.cname[i],"0")!=0){
+						printf("%s ",p->data.cname[i]);
+						i++;
+					}
+					break;
+				}
+				p=p->next;
+		}
+				break;
+		case 2: printf("请输入该学生的学号： "); scanf("%d",&nu);
+				while(p!=NULL){
+					int i=0; 
+					if(p->data.number==nu) {
+						printf("姓名：%s  学号：%d  班级：%s  所选课程： ",p->data.name,p->data.number,p->data.clas);
+						while(strcmp(p->data.cname[i],"0")!=0){
+						printf("%s ",p->data.cname[i]);
+						i++;
+					}
+					break;
+					}
+					p=p->next;
+				}
+				break;
+				
+		}
+	}
+void Tsearch(Tlist L)
+{	Tlist p=L->next;
+	int ch;
+	int nu;
+	char na[20];
+	printf("请输入您要查找的教师的1：姓名或2：工号"); 
+	scanf("%d",&ch);
+	getchar();
+	switch(ch){
+		case 1: printf("请输入该教师的姓名："); scanf("%s",na);
+				while(p!=NULL){
+					int i=0;
+				if(strcmp(p->data.name,na)==0) {
+					printf("姓名：%s  工号：%d  院系：%s  教授课程： ",p->data.name,p->data.number,p->data.institute);
+					while(strcmp(p->data.cname[i],"0")!=0){
+						printf("%s ",p->data.cname[i]);
+						i++;
+					}
+					break;
+				}
+				p=p->next;
+		}
+				break;
+		case 2: printf("请输入该教师的工号： "); scanf("%d",&nu);
+				while(p!=NULL){
+					int i=0;
+					if(p->data.number==nu) {
+						printf("姓名：%s  工号：%d  院系：%s  教授课程： ",p->data.name,p->data.number,p->data.institute);
+						while(strcmp(p->data.cname[i],"0")!=0){
+						printf("%s ",p->data.cname[i]);
+						i++;
+					}
+					break;
+					}
+					p=p->next;
+				}
+				break;
+				
+		}
+	}
+void Csearch(Clist L)
+{	Clist p=L->next;
+	int ch;
+	char na[20];
+	int nu;
+	printf("请输入您要查找的课程的1：名称或2：编号"); 
+	scanf("%d",&ch);
+	getchar();
+	switch(ch){
+		case 1:printf("请输入课程的名称："); scanf("%s",na); 
+		while (p!=NULL) {
+			if(strcmp(p->data.name,na)==0) {
+				printf("名称：%s  编号：%d  所属院系：%s  授课教师：%s",p->data.name,p->data.number,p->data.institute,p->data.tname);
+				break;
+			}
+			p=p->next;
+		}
+		case 2:printf("请输入课程的编号："); scanf("%d",&nu);
+		while (p!=NULL) {
+			if(nu==p->data.number) {
+				printf("名称：%s  编号：%d  所属院系：%s  授课教师：%s",p->data.name,p->data.number,p->data.institute,p->data.tname);
+				break;
+			}
+			p=p->next;
+		}
+			
+	}
+}
+int main()
+{	char  yn='y';
+	int mn=0;
+	Slist SL;
+	Clist CL;
+	Tlist TL;
+	Sini(SL);//////初始化 
+	Cini(CL);
+	Tini(TL);
+	
+	
+	
+	while(yn=='y'||yn=='Y')
+	{	system("cls");
+		mn=menu();
+		switch(mn){
+			case 1: Sinsert(SL); printf("添加成功!\n"); break;
+			case 2: Cinsert(CL); printf("添加成功!\n"); break;
+			case 3: Tinsert(TL); printf("添加成功!\n"); break;
+			
+			
+			case 7: Stravel(SL); break;
+			case 8: Ctravel(CL); break;
+			case 9: Ttravel(TL); break;
+			case 10:Ssearch(SL); break;
+			case 11:Tsearch(TL); break;
+			case 12:Csearch(CL); break;
+
+			
+			
+			
+		}
+		printf("再次操作？ y/n： ");
+		scanf("%c",&yn); 
+		getchar();///吸收回车 
+	}
+	
+}
